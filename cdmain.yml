@@ -1,0 +1,26 @@
+---
+- name: Collect Log Files Playbook
+  hosts: control_node
+  become: true
+
+  tasks:
+    - name: Ensure the directory for log files exists on the manage node
+      file:
+        path: "/home/Mallari_CPE243_HOA7.2/"
+        state: directory
+        mode: '0755'
+      become: true
+
+    - name: Fetch log files from control nodes
+      fetch:
+        src: "/var/log/{{ item }}"
+        dest: "/home/ashley/{{ item }}"
+        flat: yes
+      become: true
+      with_items:
+        - syslog
+        - auth.log
+
+    - name: Display message about fetching log files
+      debug:
+        msg: "Log files have been fetched from control nodes."
